@@ -1,0 +1,20 @@
+{
+    "name": "divyagovardhan/ep_09_server_1",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aslikyan David"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.4 | ^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Src\\": "core/Src/",
+            "": "app/"
+        }
+    }
+}
