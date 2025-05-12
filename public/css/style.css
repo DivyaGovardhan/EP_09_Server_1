@@ -1,0 +1,306 @@
+@font-face {
+    font-family: 'inter';
+    src: url('../fonts/Inter_24pt-Light.ttf');
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    font-family: inter;
+    letter-spacing: 0.3rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: black;
+}
+
+html{
+    background-color: #DEDEDE;
+}
+
+input{
+    box-sizing: border-box;
+    transition: 0.3s;
+    font-size: 20pt;
+}
+
+select{
+    width: 500px;
+    height: 80px;
+}
+
+option{
+    font-size: 20pt;
+}
+
+input:hover{
+    border: none;
+    box-shadow: 0px 0px 8px #6e6e6e;
+    transition: 0.3s;
+}
+
+input[placeholder="Номер читательского билета"]:hover{
+    box-shadow: none;
+    border: 2px solid black;
+}
+
+.button{
+    border-radius: 50px;
+    border: none;
+    font-size: 20pt;
+    cursor: pointer;
+}
+
+button{
+    border-radius: 50px;
+    border: none;
+    font-size: 20pt;
+    cursor: pointer;
+}
+
+.white-button{
+    padding: 10px 18px;
+}
+
+.black-button{
+    padding: 10px 18px;
+    background: #4C4C4C;
+    color: #ffffff;
+}
+
+header{
+    position: fixed;
+    background: #ffffff;
+    height: 120px;
+    width: 100%;
+    box-shadow: 0 5px 5px rgb(196, 196, 196);
+    z-index: 1;
+}
+
+header .container{
+    margin: 0 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    user-select: none
+}
+
+.logo img{
+    -webkit-user-drag: none
+}
+
+.logo h1{
+    margin-left: 25px;
+    font-size: 30pt;
+    color: #4C4C4C;
+}
+
+nav a{
+    color: #4C4C4C;
+}
+
+nav a:not(:last-child){
+    width: fit-content;
+    padding: 15px 20px;
+    background: #D9D9D9;
+    margin-right: 50px;
+    transition: 0.2s;
+}
+
+nav a:not(:last-child):hover{
+    background: #AAAAAA;
+    color: #ffffff;
+    transition: 0.2s;
+}
+
+.login-form{
+    display: flex;
+    flex-direction: column;
+    font-size: 20pt;
+}
+
+.login-form input{
+    margin-top: 10px;
+    margin-bottom: 50px;
+    width: 50%;
+    height: 40px;
+}
+
+.login-form button{
+    height: 70px;
+    width: fit-content;
+    padding: 0 20px;
+    border: none;
+    border-radius: 100px;
+    background: #D9D9D9;
+    color: #4C4C4C;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.login-form button:hover{
+    background: #AAAAAA;
+    color: #ffffff;
+    transition: 0.2s;
+}
+
+main{
+    background-color: #ffffff;
+    min-height: 100vh;
+    height: 100%;
+    width: 80%;
+    margin: 0 auto;
+}
+
+main .container-login{
+    padding: 30px;
+}
+
+main .container-info{
+    padding: 30px;
+}
+
+.container-logo-login{
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.container-logo-login > nav{
+    display: none;
+}
+
+main .container{
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.left {
+    width: 45%;
+}
+
+main h1{
+    margin-top: 120px;
+    font-size: 50pt;
+    margin-bottom: 30px;
+}
+
+.create-button{
+    height: 70px;
+    width: fit-content;
+    padding: 0 20px;
+    border: none;
+    border-radius: 50px;
+    background: #D9D9D9;
+    color: #4C4C4C;
+    transition: 0.2s;
+}
+
+.create-button:hover{
+    background: #AAAAAA;
+    color: #ffffff;
+    transition: 0.2s;
+}
+
+.list{
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+    word-break: break-all;
+}
+
+.list a{
+    width: fit-content;
+    border-radius: 50px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    transition: 0.2s;
+    color: #4C4C4C;
+}
+
+.list div{
+    margin-top: 20px;
+}
+
+.list a:hover{
+    background: #D9D9D9;
+    transition: 0.2s;
+    color: black;
+}
+
+.right{
+    position: fixed;
+    top: 14%;
+    right: 12%;
+    width: 40%;
+    height: calc(100vh - 180px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #DEDEDE;
+    border-radius: 40px;
+}
+
+.right h2{
+    font-size: 30pt;
+    width: fit-content;
+    margin: 30px 0 60px 0;
+}
+
+.right > input{
+    width: 600px;
+    height: 45px;
+    margin-bottom: 50px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.info-form{
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    font-size: 20pt;
+}
+
+.info-form > *{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.info-form input{
+    width: 500px;
+    height: 38px;
+    font-size: 20pt;
+}
+
+#edition{
+    width: 340px;
+}
+
+#edition-number{
+    width: 10%;
+}
+
+#annotation{
+    height: 120px;
+    width: 100%;
+}
+
+.info-form a{
+    text-decoration: underline;
+}
+
+textarea {
+    font-size: 16pt;
+    resize: none;
+}
+

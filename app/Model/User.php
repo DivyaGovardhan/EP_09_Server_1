@@ -12,15 +12,18 @@ class User extends Model implements IdentityInterface
 
     public $timestamps = false;
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'patronym',
         'login',
-        'password'
+        'password',
+        'is_admin'
     ];
 
     protected static function booted()
     {
         static::created(function ($user) {
-            $user->password = md5($user->password);
+            $user->password = password_hash($user->password, PASSWORD_DEFAULT);
             $user->save();
         });
     }
@@ -34,7 +37,7 @@ class User extends Model implements IdentityInterface
     //Возврат первичного ключа
     public function getId(): int
     {
-        return $this->id;
+        return $this->ID;
     }
 
     //Возврат аутентифицированного пользователя

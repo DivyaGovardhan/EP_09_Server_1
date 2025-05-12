@@ -7,6 +7,7 @@ use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Src\Auth\Auth;
+use Src\Auth\IdentityInterface; // Добавлено
 
 class Application
 {
@@ -14,6 +15,7 @@ class Application
     private Route $route;
     private Capsule $dbManager;
     private Auth $auth;
+    private ?IdentityInterface $user = null; // Добавлено: свойство user и инициализация
 
     public function __construct(Settings $settings)
     {
@@ -29,7 +31,9 @@ class Application
         //Настройка для работы с базой данных
         $this->dbRun();
         //Инициализация класса пользователя на основе настроек приложения
-        $this->auth::init(new $this->settings->app['identity']);
+        $identityClass = $this->settings->app['identity']; // Получаем имя класса
+        $this->user = new $identityClass(); // Создаем экземпляр класса пользователя
+        $this->auth::init($this->user); // Передаем экземпляр в Auth::init()
     }
 
     public function __get($key)
@@ -41,6 +45,8 @@ class Application
                 return $this->route;
             case 'auth':
                 return $this->auth;
+            case 'user':  // Добавлено: обработка запроса к свойству user
+                return $this->user;
         }
         throw new Error('Accessing a non-existent property');
     }
