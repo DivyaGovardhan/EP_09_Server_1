@@ -18,10 +18,10 @@
             <?php
             if (app()->auth::check()):
                 ?>
-                <a href="#" class="button">Читатели</a>
-                <a href="#" class="button">Книги</a>
-                <a href="#" class="button">Авторы</a>
-                <a href="<?= app()->route->getUrl('/login')?>" class="button">Выйти</a>
+                <a href="<?= app()->route->getUrl('/readers') ?>" class="button">Читатели</a>
+                <a href="<?= app()->route->getUrl('/books') ?>" class="button">Книги</a>
+                <a href="<?= app()->route->getUrl('/authors') ?>" class="button">Авторы</a>
+                <a href="<?= app()->route->getUrl('/logout') ?>" class="button">Выйти</a>
             <?php
             endif;
             ?>
