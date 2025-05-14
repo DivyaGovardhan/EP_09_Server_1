@@ -21,14 +21,6 @@ class Book extends Model
         'annotation'
     ];
 
-    protected static function booted()
-    {
-        static::created(function ($book) {
-            $book->password = password_hash($book->password, PASSWORD_DEFAULT);
-            $book->save();
-        });
-    }
-
     //Выборка книги по первичному ключу
     public function findIdentity(int $id)
     {

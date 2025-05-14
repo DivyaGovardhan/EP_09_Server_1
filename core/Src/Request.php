@@ -9,14 +9,23 @@ class Request
     protected array $body;
     public string $method;
     public array $headers;
-
+    public string $uri;
     public function __construct()
     {
         $this->body = $_REQUEST;
-        $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $this->headers = getallheaders() ?? [];
-    }
 
+        // Получаем URI и убираем параметры запроса
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+        $this->uri = parse_url($requestUri, PHP_URL_PATH) ?? '/';
+
+        // Нормализуем URI (убираем дублирующиеся слеши)
+        $this->uri = rtrim($this->uri, '/');
+        if ($this->uri === '') {
+            $this->uri = '/';
+        }
+    }
     public function all(): array
     {
         return $this->body + $this->files();

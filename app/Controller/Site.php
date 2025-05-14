@@ -7,6 +7,7 @@ use Src\View;
 use Src\Request;
 use Model\User;
 use Model\Reader;
+use Model\Book;
 use Src\Auth\Auth;
 
 class Site
@@ -22,73 +23,103 @@ class Site
         $readers = Reader::orderBy('last_name')->get();
         return (new View())->render('site.readers', ['readers' => $readers]);
     }
-    public function updateReader(Request $request, $id): string  // Добавлен метод updateReader
+
+    public function updateReader(Request $request, $id): string
     {
         $reader = Reader::findIdentity($id);
 
         if (!$reader) {
-            // Обработка ошибки, читатель не найден
-            return 'Reader not found'; // Или перенаправление на страницу ошибки
+            return (new View())->render('site.error', ['message' => 'Читатель не найден']);
         }
 
-        // Получаем данные из запроса
         $reader->last_name = $request->post('last-name');
         $reader->first_name = $request->post('first-name');
         $reader->patronym = $request->post('patronym');
         $reader->address = $request->post('address');
         $reader->phone_number = $request->post('phone-number');
 
-        // Сохраняем изменения
-        $reader->save();
+        if ($reader->save()) {
+            app()->route->redirect('/readers');
+        }
 
-        // Перенаправляем обратно на страницу читателей
-        header('Location: /readers');
-        exit();
+        return (new View())->render('site.error', ['message' => 'Ошибка при обновлении читателя']);
     }
 
     public function books(): string
     {
-        $books = Book::all();
+        $books = Book::orderBy('title')->get();
         return (new View())->render('site.books', ['books' => $books]);
     }
 
     public function authors(): string
     {
-        // Здесь должна быть логика для получения данных об авторах
-        // Например, из модели Author
-        // $authors = Author::all(); // или Author::orderBy(...)->get();
-
-        // Пока что просто возвращаем пустой массив:
         $authors = [];
         return (new View())->render('site.authors', ['authors' => $authors]);
     }
 
     public function register(Request $request): string
     {
-        if ($request->method === 'POST' && User::create($request->all())) {
-            app()->route->redirect('/readers');
+        if (!Auth::check() || !Auth::user()->is_admin) {
+            app()->route->redirect('/login');
         }
+
+        if ($request->method === 'POST') {
+            $data = $request->all();
+            $data['is_admin'] = isset($data['is_admin']) ? 1 : 0;
+
+            if (User::create($data)) {
+                app()->route->redirect('/users');
+            }
+
+            return (new View())->render('site.register', ['message' => 'Ошибка при регистрации']);
+        }
+
         return new View('site.register');
     }
+
+    public function users(): string
+    {
+        $users = User::all();
+        return (new View())->render('site.users', ['users' => $users]);
+    }
+
     public function login(Request $request): string
     {
-        //Если просто обращение к странице, то отобразить форму
+        // Если уже авторизован - перенаправляем сразу
+        if (Auth::check()) {
+            $this->redirectAfterLogin();
+        }
+
         if ($request->method === 'GET') {
             return new View('site.login');
         }
-        //Если удалось аутентифицировать пользователя, то редирект
+
         if (Auth::attempt($request->all())) {
-//            print("aboba");
-//            die();
-            app()->route->redirect('/readers');
+            $this->redirectAfterLogin();
         }
-        //Если аутентификация не удалась, то сообщение об ошибке
+
         return new View('site.login', ['message' => 'Неправильные логин или пароль']);
+    }
+
+    private function redirectAfterLogin(): void
+    {
+        $user = Auth::user();
+        if ($user->is_admin) {
+            app()->route->redirect('/users');
+        } else {
+            app()->route->redirect('/books');
+        }
+        exit;
     }
 
     public function logout(): void
     {
         Auth::logout();
         app()->route->redirect('/login');
+    }
+
+    public function error(): string
+    {
+        return (new View())->render('site.error', ['message' => 'Доступ запрещен']);
     }
 }

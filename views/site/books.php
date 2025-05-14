@@ -7,12 +7,12 @@
             <?php
             foreach ($books as $book) {
                 echo '<a href="#" class="book-link button" data-book-id="' . $book->id . '"
-                       data-name="' . htmlspecialchars($book->name, ENT_QUOTES, 'UTF-8') . '"
-                       data-edition="' . htmlspecialchars($book->edition, ENT_QUOTES, 'UTF-8') . '"
+                       data-title="' . htmlspecialchars($book->title, ENT_QUOTES, 'UTF-8') . '"
+                       data-publication-year="' . htmlspecialchars($book->publication_year, ENT_QUOTES, 'UTF-8') . '"
                        data-edition-number="' . htmlspecialchars($book->edition_number ?? '', ENT_QUOTES, 'UTF-8') . '"
                        data-price="' . htmlspecialchars($book->price ?? '', ENT_QUOTES, 'UTF-8') . '"
                        data-annotation="' . htmlspecialchars($book->annotation ?? '', ENT_QUOTES, 'UTF-8') . '">
-                        ' . htmlspecialchars($book->name, ENT_QUOTES, 'UTF-8') . '</a>';
+                        ' . htmlspecialchars($book->title, ENT_QUOTES, 'UTF-8') . '</a>';
             }
             ?>
         </div>
@@ -22,13 +22,13 @@
         <h2>Книга</h2>
         <form class="info-form">
             <div>
-                <label for="name">Название</label>
-                <input type="text" id="name" name="name" value="">
+                <label for="title">Название</label>
+                <input type="text" id="title" name="title" value="">
             </div>
 
             <div>
-                <label for="edition">Издание</label>
-                <input type="date" id="edition" name="edition" value="">
+                <label for="publication-year">Издание</label>
+                <input type="date" id="publication-year" name="publication-year" value="">
                 <label for="edition-number">№</label>
                 <input type="number" id="edition-number" name="edition-number" value="">
             </div>
@@ -56,7 +56,6 @@
             <label for="annotation">Аннотация</label>
             <textarea id="annotation"></textarea>
 
-
             <a href="#" class="info-link">История аренды</a>
 
             <div class="button-container">
@@ -75,8 +74,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         const bookLinks = document.querySelectorAll('.book-link');
         const rightDiv = document.querySelector('.right');
-        const nameInput = document.getElementById('name');
-        const editionInput = document.getElementById('edition');
+        const titleInput = document.getElementById('title');
+        const publicationYearInput = document.getElementById('publication-year');
         const editionNumberInput = document.getElementById('edition-number');
         const priceInput = document.getElementById('price');
         const annotationTextarea = document.getElementById('annotation');
@@ -85,14 +84,14 @@
             link.addEventListener('click', function(event) {
                 event.preventDefault();
 
-                const name = this.dataset.name;
-                const edition = this.dataset.edition;
+                const title = this.dataset.title;
+                const publicationYear = this.dataset.publicationYear;
                 const editionNumber = this.dataset.editionNumber;
                 const price = this.dataset.price;
                 const annotation = this.dataset.annotation;
 
-                nameInput.value = name;
-                editionInput.value = edition;
+                titleInput.value = title;
+                publicationYearInput.value = publicationYear;
                 editionNumberInput.value = editionNumber;
                 priceInput.value = price;
                 annotationTextarea.value = annotation;

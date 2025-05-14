@@ -17,6 +17,10 @@
         <label for="password">Пароль</label>
         <input type="password" id="password" name="password" required>
 
+        <label>
+            <input type="checkbox" name="is_admin"> Администратор
+        </label>
+
         <button type="submit">Внести нового сотрудника</button>
     </form>
 </div>

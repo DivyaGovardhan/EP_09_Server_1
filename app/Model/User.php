@@ -43,7 +43,10 @@ class User extends Model implements IdentityInterface
     //Возврат аутентифицированного пользователя
     public function attemptIdentity(array $credentials)
     {
-        return self::where(['login' => $credentials['login'],
-            'password' => md5($credentials['password'])])->first();
+        $user = self::where('login', $credentials['login'])->first();
+        if ($user && password_verify($credentials['password'], $user->password)) {
+            return $user;
+        }
+        return null;
     }
 }

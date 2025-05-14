@@ -15,16 +15,16 @@
             <h1>Library system</h1>
         </div>
         <nav>
-            <?php
-            if (app()->auth::check()):
-                ?>
-                <a href="<?= app()->route->getUrl('/readers') ?>" class="button">Читатели</a>
-                <a href="<?= app()->route->getUrl('/books') ?>" class="button">Книги</a>
-                <a href="<?= app()->route->getUrl('/authors') ?>" class="button">Авторы</a>
+            <?php if (app()->auth::check()): ?>
+                <?php if (app()->auth::user()->is_admin): ?>
+                    <a href="<?= app()->route->getUrl('/users') ?>" class="button">Пользователи</a>
+                <?php else: ?>
+                    <a href="<?= app()->route->getUrl('/readers') ?>" class="button">Читатели</a>
+                    <a href="<?= app()->route->getUrl('/books') ?>" class="button">Книги</a>
+                    <a href="<?= app()->route->getUrl('/authors') ?>" class="button">Авторы</a>
+                <?php endif; ?>
                 <a href="<?= app()->route->getUrl('/logout') ?>" class="button">Выйти</a>
-            <?php
-            endif;
-            ?>
+            <?php endif; ?>
         </nav>
     </div>
 </header>
