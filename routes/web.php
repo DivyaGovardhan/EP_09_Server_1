@@ -17,3 +17,5 @@ Route::add('GET', '/authors', [Site::class, 'authors'])->middleware('auth');
 // Маршруты только для администраторов
 Route::add('GET', '/users', [Site::class, 'users'])->middleware('auth');
 Route::add(['GET', 'POST'], '/register', [Site::class, 'register'])->middleware('auth');
+Route::add('POST', '/save-user', [Site::class, 'saveUser'])->middleware('auth');
+Route::add('POST', '/delete-user', [Site::class, 'deleteUser'])->middleware('auth');

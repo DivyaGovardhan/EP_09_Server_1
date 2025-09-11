@@ -13,8 +13,11 @@ class Auth
     public static function init(IdentityInterface $user): void
     {
         self::$user = $user;
-        if (self::user()) {
-            self::login(self::user());
+
+        $id = Session::get('id');
+
+        if ($id && $userInstance = self::$user->findIdentity($id)) {
+            self::$user = $userInstance;
         }
     }
 

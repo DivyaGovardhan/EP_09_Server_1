@@ -1,5 +1,5 @@
 <div class="container-login">
-    <h1>Регистрация новог сотрудника</h1>
+    <h1>Регистрация нового сотрудника</h1>
 
     <form class="login-form" method="post">
         <label for="first_name">Имя</label>

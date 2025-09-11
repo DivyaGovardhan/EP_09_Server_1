@@ -22,16 +22,21 @@ class User extends Model implements IdentityInterface
 
     protected static function booted()
     {
-        static::created(function ($user) {
+        static::creating(function ($user) {
             $user->password = password_hash($user->password, PASSWORD_DEFAULT);
-            $user->save();
+        });
+
+        static::updating(function ($user) {
+            if ($user->isDirty('password')) {
+                $user->password = password_hash($user->password, PASSWORD_DEFAULT);
+            }
         });
     }
 
     //Выборка пользователя по первичному ключу
-    public function findIdentity(int $id)
+    public function findIdentity(int $ID)
     {
-        return self::where('id', $id)->first();
+        return self::where('ID', $ID)->first();
     }
 
     //Возврат первичного ключа
@@ -43,10 +48,30 @@ class User extends Model implements IdentityInterface
     //Возврат аутентифицированного пользователя
     public function attemptIdentity(array $credentials)
     {
-        $user = self::where('login', $credentials['login'])->first();
-        if ($user && password_verify($credentials['password'], $user->password)) {
-            return $user;
+        echo "AttemptIdentity called with login: " . $credentials['login'] . "<br>";
+
+        $employee = self::where('login', $credentials['login'])->first();
+
+        if (!$employee) {
+            echo "User not found<br>";
+            return null;
         }
+
+        echo "User found: " . $employee->login . "<br>";
+        echo "Input password: " . $credentials['password'] . "<br>";
+        echo "Stored hash: " . $employee->password . "<br>";
+
+        if (password_verify($credentials['password'], $employee->password)) {
+            echo "Password verified successfully<br>";
+            return $employee;
+        } else {
+            echo "Password verification failed<br>";
+            // Для отладки: проверяем хэш напрямую
+            $testHash = password_hash($credentials['password'], PASSWORD_DEFAULT);
+            echo "New hash of input: " . $testHash . "<br>";
+            echo "Verify with new hash: " . (password_verify($credentials['password'], $testHash) ? 'true' : 'false') . "<br>";
+        }
+
         return null;
     }
 }

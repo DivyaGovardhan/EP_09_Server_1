@@ -85,17 +85,21 @@ class Site
 
     public function login(Request $request): string
     {
-        // Если уже авторизован - перенаправляем сразу
         if (Auth::check()) {
             $this->redirectAfterLogin();
         }
 
         if ($request->method === 'GET') {
+            echo(" form");
             return new View('site.login');
         }
 
-        if (Auth::attempt($request->all())) {
-            $this->redirectAfterLogin();
+        if ($request->method === 'POST') {
+            echo(" post");
+
+            if (Auth::attempt($request->all())) {
+                $this->redirectAfterLogin();
+            }
         }
 
         return new View('site.login', ['message' => 'Неправильные логин или пароль']);
@@ -109,7 +113,6 @@ class Site
         } else {
             app()->route->redirect('/books');
         }
-        exit;
     }
 
     public function logout(): void
@@ -121,5 +124,109 @@ class Site
     public function error(): string
     {
         return (new View())->render('site.error', ['message' => 'Доступ запрещен']);
+    }
+
+    public function saveUser(Request $request): void
+    {
+        header('Content-Type: application/json');
+
+        // Отладочная информация
+        error_log("Received data: " . print_r($request->all(), true));
+
+        if (!Auth::check() || !Auth::user()->is_admin) {
+            echo json_encode(['success' => false, 'message' => 'Доступ запрещен']);
+            exit;
+        }
+
+        $data = $request->all();
+        $id = $data['id'] ?? null;
+
+        // Отладочная информация о проверяемых полях
+        error_log("last_name: " . ($data['last_name'] ?? 'NOT SET'));
+        error_log("first_name: " . ($data['first_name'] ?? 'NOT SET'));
+        error_log("login: " . ($data['login'] ?? 'NOT SET'));
+
+        // Проверяем обязательные поля
+        if (empty($data['last_name']) || empty($data['first_name']) || empty($data['login'])) {
+            echo json_encode(['success' => false, 'message' => 'Заполните обязательные поля']);
+            exit;
+        }
+
+        // Если это создание нового пользователя, проверяем пароль
+        if (!$id && empty($data['password'])) {
+            echo json_encode(['success' => false, 'message' => 'Пароль обязателен для нового пользователя']);
+            exit;
+        }
+
+        try {
+            if ($id) {
+                // Обновление существующего пользователя
+                $user = User::find($id);
+                if (!$user) {
+                    echo json_encode(['success' => false, 'message' => 'Пользователь не найден']);
+                    exit;
+                }
+
+                // Если пароль не указан, оставляем старый
+                if (empty($data['password'])) {
+                    unset($data['password']);
+                }
+
+                $user->fill($data);
+                if ($user->save()) {
+                    echo json_encode(['success' => true]);
+                    exit;
+                }
+            } else {
+                // Создание нового пользователя
+                if (User::create($data)) {
+                    echo json_encode(['success' => true]);
+                    exit;
+                }
+            }
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Ошибка базы данных: ' . $e->getMessage()]);
+            exit;
+        }
+
+        echo json_encode(['success' => false, 'message' => 'Ошибка при сохранении']);
+        exit;
+    }
+
+    public function deleteUser(Request $request): void
+    {
+        // Устанавливаем заголовок для JSON ответа
+        header('Content-Type: application/json');
+
+        if (!Auth::check() || !Auth::user()->is_admin) {
+            echo json_encode(['success' => false, 'message' => 'Доступ запрещен']);
+            exit;
+        }
+
+        $id = $request->get('id');
+        if (!$id) {
+            echo json_encode(['success' => false, 'message' => 'ID пользователя не указан']);
+            exit;
+        }
+
+        $user = User::find($id);
+        if (!$user) {
+            echo json_encode(['success' => false, 'message' => 'Пользователь не найден']);
+            exit;
+        }
+
+        // Не позволяем удалить самого себя
+        if ($user->id === Auth::user()->id) {
+            echo json_encode(['success' => false, 'message' => 'Нельзя удалить собственный аккаунт']);
+            exit;
+        }
+
+        if ($user->delete()) {
+            echo json_encode(['success' => true]);
+            exit;
+        }
+
+        echo json_encode(['success' => false, 'message' => 'Ошибка при удалении']);
+        exit;
     }
 }

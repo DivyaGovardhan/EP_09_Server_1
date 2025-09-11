@@ -3,7 +3,7 @@
     if (!app()->auth::check()):
     ?>
     <h1>Вход</h1>
-    <form class="login-form" method="post">
+    <form class="login-form" method="post" action="/login">
         <label for="login">Логин</label>
         <input type="text" id="login" name="login" required>
 

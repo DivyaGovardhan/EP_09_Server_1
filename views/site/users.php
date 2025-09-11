@@ -26,13 +26,13 @@
             <input type="hidden" id="user-id" name="id" value="">
 
             <div>
-                <label for="last-name">Фамилия</label>
-                <input type="text" id="last-name" name="last-name" value="">
+                <label for="last_name">Фамилия</label>
+                <input type="text" id="last_name" name="last_name" value="">
             </div>
 
             <div>
-                <label for="first-name">Имя</label>
-                <input type="text" id="first-name" name="first-name" value="">
+                <label for="first_name">Имя</label>
+                <input type="text" id="first_name" name="first_name" value="">
             </div>
 
             <div>
@@ -76,6 +76,7 @@
         createBtn.addEventListener('click', function() {
             userForm.reset();
             document.getElementById('user-id').value = '';
+            document.getElementById('is_admin').checked = false;
             formContainer.style.display = 'flex';
         });
 
@@ -86,11 +87,12 @@
 
                 // Заполняем форму данными пользователя
                 document.getElementById('user-id').value = this.getAttribute('data-user-id');
-                document.getElementById('last-name').value = this.getAttribute('data-last-name');
-                document.getElementById('first-name').value = this.getAttribute('data-first-name');
+                document.getElementById('last_name').value = this.getAttribute('data-last-name');
+                document.getElementById('first_name').value = this.getAttribute('data-first-name');
                 document.getElementById('patronym').value = this.getAttribute('data-patronym');
                 document.getElementById('login').value = this.getAttribute('data-login');
                 document.getElementById('is_admin').checked = this.getAttribute('data-is-admin') === '1';
+                document.getElementById('password').value = '';
 
                 formContainer.style.display = 'flex';
             });
@@ -100,11 +102,19 @@
         userForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Здесь будет AJAX запрос для сохранения данных
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
+            // Собираем данные вручную, чтобы избежать проблем с FormData
+            const data = {
+                id: document.getElementById('user-id').value,
+                last_name: document.getElementById('last_name').value,
+                first_name: document.getElementById('first_name').value,
+                patronym: document.getElementById('patronym').value,
+                login: document.getElementById('login').value,
+                password: document.getElementById('password').value,
+                is_admin: document.getElementById('is_admin').checked ? 1 : 0
+            };
 
-            // Пример AJAX запроса (нужно адаптировать под ваш API)
+            console.log("Отправляемые данные:", data); // Для отладки
+
             fetch('/save-user', {
                 method: 'POST',
                 headers: {
@@ -112,10 +122,16 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    location.reload(); // Перезагружаем страницу после сохранения
+                    alert('Данные успешно сохранены');
+                    location.reload();
                 } else {
                     alert('Ошибка сохранения: ' + (data.message || ''));
                 }
@@ -129,23 +145,36 @@
         // Обработка удаления
         deleteBtn.addEventListener('click', function() {
             const userId = document.getElementById('user-id').value;
-            if (!userId) return;
+            if (!userId) {
+                alert('Пользователь не выбран');
+                return;
+            }
 
             if (confirm('Вы уверены, что хотите удалить этого сотрудника?')) {
-                // Здесь будет AJAX запрос для удаления
-                fetch('/delete-user?id=' + userId)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload(); // Перезагружаем страницу после удаления
-                        } else {
-                            alert('Ошибка удаления: ' + (data.message || ''));
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Произошла ошибка при удалении');
-                    });
+                fetch('/delete-user?id=' + userId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Пользователь успешно удален');
+                        location.reload();
+                    } else {
+                        alert('Ошибка удаления: ' + (data.message || ''));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при удалении');
+                });
             }
         });
     });

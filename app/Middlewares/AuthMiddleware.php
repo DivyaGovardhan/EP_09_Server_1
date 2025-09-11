@@ -8,7 +8,7 @@ use Src\Request;
 class AuthMiddleware
 {
     private array $publicRoutes = ['/login', '/logout'];
-    private array $adminRoutes = ['/users', '/register'];
+    private array $adminRoutes = ['/users', '/register', '/save-user', '/delete-user'];
     private array $userRoutes = ['/books', '/readers', '/authors'];
 
     public function handle(Request $request)
